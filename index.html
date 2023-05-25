@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ББУГ тайлан</title>
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" href="img/logo.ico" type="image/x-icon">
+</head>
+
+
+<body>
+
+    <section id="header">
+        <a href="#"><img src="static/img/logo.png" class="logo" alt="" style="width: 30px; height: auto;"></a>
+
+        <div>
+            <ul id="navbar">
+                <li><a class="active" href="index.html">Home</a></li>
+
+
+                
+                <a href="#" id="close"><i class="far fa-times"></i></a>
+            </ul>
+        </div>
+        <div id="mobile">
+            <i id="bar" class="fas fa-outdent"></i>
+        </div>
+    
+        <script>
+            var mobileMenuVisible = false;
+            var mobileMenu = document.getElementById("navbar");
+            var mobileIcon = document.getElementById("bar");
+    
+            // Toggle mobile menu visibility
+            function toggleMobileMenu() {
+                if (mobileMenuVisible) {
+                    mobileMenu.style.display = "none";
+                    mobileIcon.classList.remove("active");
+                    mobileMenuVisible = false;
+                } else {
+                    mobileMenu.style.display = "block";
+                    mobileIcon.classList.add("active");
+                    mobileMenuVisible = true;
+                }
+            }
+    
+            // Handle clicks outside the navbar menu
+            document.addEventListener("click", function (event) {
+                var target = event.target;
+                var isMobileMenuClicked = mobileMenu.contains(target);
+                var isMobileIconClicked = mobileIcon.contains(target);
+    
+                if (window.matchMedia("(max-width: 767px)").matches && !isMobileMenuClicked && !isMobileIconClicked && mobileMenuVisible) {
+                    toggleMobileMenu();
+                }
+            });
+    
+            // Toggle mobile menu when mobile icon is clicked
+            mobileIcon.addEventListener("click", function () {
+                toggleMobileMenu();
+            });
+        </script>
+    
+        <style>
+            /* Hide navbar in mobile version by default */
+            #navbar {
+                display: none;
+            }
+    
+            /* Add styles for active mobile icon */
+            #bar.active {
+                color: red;
+            }
+    
+            /* Show navbar in desktop version */
+            @media screen and (min-width: 768px) {
+                #navbar {
+                    display: flex !important;
+                }
+            }
+        </style>
+    </section>
+
+    <section id="hero">
+        <h2>Daily report</h2>
+        <h1>Weekly report</h1>
+        <p>ББУГ-н тайлангийн хуудсанд тавтай морил </p>
+        <button onclick="window.location.href = 'shop.html';">See the report</button>
+        
+        <iframe title="PBI Report Template" width="1140" height="541.25" src="https://app.powerbi.com/reportEmbed?reportId=01c7856a-8765-4aa1-b5b8-231df85cc041&autoAuth=true&ctid=7173e817-f181-428c-97e2-585ad12b747e" frameborder="0" allowFullScreen="true"></iframe>
+
+    </section>
+
+    <section id="table-section">
+
+        <h2>Table Data</h2>
+        <table id="data-table">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Create Date</th>
+                    <th>Price Subtotal Incl</th>
+                    <th>Price Subtotal</th>
+                    <th>Product ID</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in table_data %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td>{{ row[3] }}</td>
+                    <td>{{ row[4] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div id="button-group">
+            <form action="/" method="POST">
+                <input type="hidden" name="store_num" value="{{ store_num }}">
+                <button type="submit" name="action" value="refresh">Refresh</button>
+                <button type="submit" name="action" value="download">Download</button>
+            </form>
+        </div>
+    </section>
+   
+    <section id="product1" class="section-p1">
+        <h2>Харилцагч судалгааны менежерүүд</h2>
+
+    <section id="feature" class="section-p1">
+        <div class="fe-box">
+            <img src="static/img/features/f1.png" alt="">
+            <h6>Т.Нямбаяр
+            </h6>
+        </div>
+        <div class="fe-box">
+            <img src="static/img/features/f2.png" alt="">
+            <h6>Д.Гарьдсүрэн</h6>
+        </div>
+        <div class="fe-box">
+            <img src="static/img/features/f3.png" alt="">
+            <h6>Б.Золзаяа</h6>
+        </div>
+        <div class="fe-box">
+            <img src="static/img/features/f4.png" alt="">
+            <h6>О.Бадамханд</h6>
+        </div>
+        <div class="fe-box">
+            <img src="static/img/features/f5.png" alt="">
+            <h6>У.Билгүүн</h6>
+        </div>
+        <div class="fe-box">
+            <img src="static/img/features/f6.png" alt="">
+            <h6>Г.Даваасүрэн</h6>
+        </div>
+        <div class="fe-box">
+            <img src="static/img/features/f7.png" alt="">
+            <h6>Г.Гүнсүлд</h6>
+        </div>
+        <div class="fe-box">
+            <img src="static/img/features/f8.png" alt="">
+            <h6>Э.Оргил</h6>
+        </div>
+        <div class="fe-box">
+            <img src="static/img/features/f9.png" alt="">
+            <h6>П.Мөнгөнсувд</h6>
+        </div>
+    </section>
+
+
+
+
+
+    <section id="newsletter" class="section-m1 section-p1">
+        <div class="newstext">
+            <h4>Санал хүсэлт</h4>
+            <p>Танд <span>тайлантай</span>  холбоотой санал хүсэлт байвал дараах холбоосыг бөглөнө үү.</p>
+        </div>
+        <form action="https://formspree.io/f/mlekvpke" method="POST" 
+            <div class="form">
+                <input type="email" name="email" placeholder="Таны мэйл" required>
+                <button class="normal">Илгээх</button>
+            </div>
+        </form>
+    </section>
+
+     
+    </footer>
+
+</body>
+
+</html>

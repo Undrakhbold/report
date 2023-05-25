@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lavender online shopping</title>
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="img/logo.ico" type="image/x-icon">
+</head>
+
+<body>
+    
+
+    <section id="header">
+        <a href="#"><img src="img/logo.png" class="logo" alt="" style="width: 30px; height: auto;"></a>
+
+        <div>
+            <ul id="navbar">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html">Shop</a></li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a class="active" href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                
+                            <!-- Cart-Icon -->
+            <i class='bx bx-shopping-bag' id="cart-icon"></i>
+                 <!-- Cart -->
+                 <div class="cart">
+                    <h2 class="cart-title">Your Cart</h2>
+                    <!-- Content -->
+                    <div class="cart-content">
+    
+                    </div>
+                    <!-- Total -->
+                    <div class="total">
+                        <div class="total-title">Total</div>
+                        <div class="total-price">$0</div>
+                    </div>
+                    <!-- Buy Button -->
+                    <button type="button" class="btn-buy">Buy Now</button>
+                    <!-- Cart Close -->
+                    <i class='bx bx-x' id="close-cart"></i>   
+                
+                <a href="#" id="close"><i class="far fa-times"></i></a>
+            </ul>
+        </div>
+        <div id="mobile">
+            <i id="bar" class="fas fa-outdent"></i>
+        </div>
+    
+        <script>
+            var mobileMenuVisible = false;
+            var mobileMenu = document.getElementById("navbar");
+            var mobileIcon = document.getElementById("bar");
+    
+            // Toggle mobile menu visibility
+            function toggleMobileMenu() {
+                if (mobileMenuVisible) {
+                    mobileMenu.style.display = "none";
+                    mobileIcon.classList.remove("active");
+                    mobileMenuVisible = false;
+                } else {
+                    mobileMenu.style.display = "block";
+                    mobileIcon.classList.add("active");
+                    mobileMenuVisible = true;
+                }
+            }
+    
+            // Handle clicks outside the navbar menu
+            document.addEventListener("click", function (event) {
+                var target = event.target;
+                var isMobileMenuClicked = mobileMenu.contains(target);
+                var isMobileIconClicked = mobileIcon.contains(target);
+    
+                if (window.matchMedia("(max-width: 767px)").matches && !isMobileMenuClicked && !isMobileIconClicked && mobileMenuVisible) {
+                    toggleMobileMenu();
+                }
+            });
+    
+            // Toggle mobile menu when mobile icon is clicked
+            mobileIcon.addEventListener("click", function () {
+                toggleMobileMenu();
+            });
+        </script>
+    
+        <style>
+            /* Hide navbar in mobile version by default */
+            #navbar {
+                display: none;
+            }
+    
+            /* Add styles for active mobile icon */
+            #bar.active {
+                color: red;
+            }
+    
+            /* Show navbar in desktop version */
+            @media screen and (min-width: 768px) {
+                #navbar {
+                    display: flex !important;
+                }
+            }
+        </style>
+    </section>
+
+    <section id="page-header" class="about-header">
+
+        <h2>Лаванда онлайн дэлгүүрт тавтай морил</h2>
+
+    </section>
+
+    <section id="about-head" class="section-p1">
+        <img src="img/about/a6.jpg" alt="">
+        <div>
+            <h2>Who We Are?</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis auteirure
+                dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+            
+
+            <br><br>
+
+            <marquee bgcolor="#ccc" loop="-1" scrollamount="5" width="100%">Лавендер онлайн худалдааны сайтад тавтай морилно уу. Хэрэгцээт барааг хамгийн хямдаар ...
+            </marquee>
+        </div>
+    </section>
+
+    import pandas as pd
+import psycopg2
+import os 
+import datetime
+
+yesterday = datetime.datetime.now()-datetime.timedelta(days=1)
+yesterday1 = datetime.datetime.now()
+yesterday1 = "'"+yesterday1.strftime('%Y-%m-%d')+"'"
+yesterday = yesterday.strftime('%m')
+yesterday = str(yesterday)
+yesterday = "'"+yesterday+"'"
+def get_data():
+    def get_data_sub(store_num):
+        if store_num == '34':
+            conn = psycopg2.connect(host="10.14.1.10",
+                        database="CARRE34_LIVE",
+                        user="on_c34",
+                        password="on_c34_pass")
+        elif store_num == '13':
+            conn = psycopg2.connect(host="10.14.1.20",
+                        database="CARRE13_LIVE",
+                        user="pos",
+                        password="pos")
+    
+
+        query = '''select order_id, create_date, price_subtotal_incl, price_subtotal, product_id from public.pos_order_line where EXTRACT(MONTH FROM CAST(create_date AS TIMESTAMP WITH TIME ZONE)) = '''+yesterday+''' and cast(create_date as date) < '''+yesterday1 
+        print(query)
+        # query_category = '''select * from public.product_category'''
+        query_product = '''select id as product_id, full_internal_code, Barcode from public.product_product'''
+
+
+        cwd = os.getcwd()
+        dir = os.path.join(cwd,'Data_files1')
+
+        df = pd.read_sql_query(query,conn)
+        df_product = pd.read_sql_query(query_product,conn)
+
+        df.to_excel(os.path.join(dir,'main_data'+store_num+'.xlsx'),index=False)
+        # df_category = pd.read_sql_query(query_category,conn)
+        # df_category.to_excel(os.path.join(dir,'category_data.xlsx'),index=False)
+        # df_category = pd.read_excel(os.path.join(dir,'category_data.xlsx'))
+        df_product.to_excel(os.path.join(dir,'product_data'+store_num+'.xlsx'),index=False)
+
+        df = pd.read_excel(os.path.join(dir,'main_data'+store_num+'.xlsx'))
+        df_product = pd.read_excel(os.path.join(dir,'product_data'+store_num+'.xlsx'))
+        df_structure = pd.read_excel(os.path.join(dir,'structure.xlsx'),dtype=str)
+
+        df['Store'] = 'S'+store_num
+        df['order_id'] = df['Store']+df['order_id'].astype(str)
+
+
+        df = df.merge(df_product,on='product_id',how='left')
+        df['Department Code'] = df['full_internal_code'].str[:2]
+        df['Department Code'] = df['Department Code'].fillna('14')
+        df = df.merge(df_structure,on='Department Code',how='left')
+        # df = df[['order_id',
+        #                 'create_date',
+        #                 'Store',
+        #                 'Department Code',
+        #                 'Department Name',
+        #                 'Division','price_subtotal_incl']]
+        # df = df.groupby(['order_id',
+        #                 'create_date',
+        #                 'Store',
+        #                 'Department Code',
+        #                 'Department Name',
+        #                 'Division']).sum('price_subtotal_incl')
+        # df = df.reset_index()
+        df.to_excel(os.path.join(dir,'data_frame'+store_num+'.xlsx'),index=False)
+    get_data_sub('34')
+    get_data_sub('13')
+    cwd = os.getcwd()
+    directory = os.path.join(cwd,'Data_files1')
+    try:
+        os.remove(os.path.join(directory,'data_frame.xlsx'))
+    except:pass
+    # try:
+    #     os.remove(os.path.join(directory,'data_frame_euro.xlsx'))
+    # except: pass
+    # List of Excel file names in the directory
+    file_names = [f for f in os.listdir(directory) if f.startswith('data_frame')]
+    print(file_names)
+    # Create an empty DataFrame to store the combined data
+    combined_data = pd.DataFrame()
+
+    # Loop through the Excel files and append the data to the combined DataFrame
+    for file_name in file_names:
+        # Read the Excel file into a DataFrame
+        data = pd.read_excel(os.path.join(directory, file_name))
+        
+        # Append the data to the combined DataFrame
+        combined_data = combined_data.append(data, ignore_index=True)
+    combined_data.to_excel(os.path.join(directory,'data_frame.xlsx'),index=False)
+    
+# get_data()
+
+    <section id="about-app" class="section-p1">
+        <h1>Download Our <a href="#">App</a> </h1>
+        <div class="video">
+            <video autoplay muted loop src="img/about/1.mp4"></video>
+        </div>
+    </section>
+
+    <section id="feature" class="section-p1">
+        <div class="fe-box">
+            <img src="img/features/f1.png" alt="">
+            <h6>Шуурхай хүргэлт</h6>
+        </div>
+        <div class="fe-box">
+            <img src="img/features/f2.png" alt="">
+            <h6>Онлайн захиалга</h6>
+        </div>
+        <div class="fe-box">
+            <img src="img/features/f3.png" alt="">
+            <h6>Бодит хэмнэлт</h6>
+        </div>
+        <div class="fe-box">
+            <img src="img/features/f4.png" alt="">
+            <h6>Бодит хямдрал</h6>
+        </div>
+        <div class="fe-box">
+            <img src="img/features/f5.png" alt="">
+            <h6>Найрсаг үйлчилгээ</h6>
+        </div>
+        <div class="fe-box">
+            <img src="img/features/f6.png" alt="">
+            <h6>24/7 Онлайн туслах</h6>
+        </div>
+    </section>
+
+
+        <!-- Link TO JS -->
+        <script src="js/main.js"></script>
+    
+        <!-- Link TO JS -->
+        <script src="main.js"></script>
+        
+
+        <section id="newsletter" class="section-m1 section-p1">
+            <div class="newstext">
+                <h4>Мэдээлэл авах</h4>
+                <p>Та манай <span>шинэ бараа</span> болон <span>хямдралын</span> мэдээллийг цаг алдалгүй авахыг хүсвэл мэйл хаягаа бүртгүүлнэ үү.</p>
+            </div>
+            <form action="https://formspree.io/f/mlekvpke" method="POST" 
+                <div class="form">
+                    <input type="email" name="email" placeholder="Таны мэйл" required>
+                    <button class="normal">Бүртгүүлэх</button>
+                </div>
+            </form>
+        </section>
+
+    <footer class="section-p1">
+        <div class="col">
+            
+            <h4>Холбоо барих</h4>
+            <p><strong>Address:</strong> УБ, ХУД, 4-р хороо, Наадамчдын зам гудамж, Төгөлдөр апартмент</p>
+            <p><strong>Phone:</strong> +976 () 80813342</p>
+            <p><strong>Hours:</strong> 09:00 - 23:00, Даваа - Ням</p>
+            <div class="follow">
+            <h4>Follow Us</h4>
+    
+            </div>
+            <ul class="social-icons">
+                <li><a href="https://www.facebook.com/profile.php?id=100091299083683"><i class="fab fa-facebook-f" style="color: #1a6ed8; font-size: 24px"></i></a></li>
+                <li><a href="https://www.instagram.com/lavenderonline.ub/?next=%2F"><i class="fab fa-instagram"" style="color: #1a6ed8; font-size: 24px"></i></a></li>
+                <li><a href="https://twitter.com/your_username"><i class="fab fa-twitter" style="color: #1a6ed8; font-size: 24px;"></i></a></li>
+                    
+                  
+                </ul>
+    
+              </div>
+        </div>
+    
+        <div class="col">
+            <h4>About</h4>
+            <a href="#">About Us</a>
+            <a href="#">Delivery Information</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms & Conditions</a>
+            <a href="#">Contact Us</a>
+        </div>
+    
+        <div class="col">
+            <h4>My Account</h4>
+            <a href="#">Sign In</a>
+            <a href="#">View Cart</a>
+            <a href="#">My Wishlist</a>
+            <a href="#">Track My Order</a>
+            <a href="#">Help</a>
+        </div>
+        
+        <div class="col install">
+            <h4>Install App</h4>
+            <p>From App Store or Google Play</p>
+            <div class="row">
+                <img src="img/pay/app.jpg" alt="" style="width: 150px; height: auto;">
+                <img src="img/pay/play.jpg" alt="" style="width: 150px; height: auto;">
+            </div>
+            <p>Secured Payment Gateways</p>
+            <img src="img/pay/pay.png" alt="" style="width: 200px; height: auto;">
+        </div>
+        
+        
+    
+        <div class="copyright">
+            <p>© 2023, Конформ ХХК </p>
+        </div>
+    
+    
+        
+    </footer>
+
+    <!-- Messenger Chat Plugin Code -->
+    <div id="fb-root"></div>
+
+    <!-- Your Chat Plugin code -->
+    <div id="fb-customer-chat" class="fb-customerchat">
+    </div>
+
+    <script>
+      var chatbox = document.getElementById('fb-customer-chat');
+      chatbox.setAttribute("page_id", "100197399716344");
+      chatbox.setAttribute("attribution", "biz_inbox");
+    </script>
+
+    <!-- Your SDK code -->
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          xfbml            : true,
+          version          : 'v16.0'
+        });
+      };
+
+      (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = 'https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js';
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+    </script>
+
+
+    <script src="script.js"></script>
+</body>
+
+</html>
